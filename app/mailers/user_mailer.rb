@@ -11,4 +11,11 @@ class UserMailer < ActionMailer::Base
     @url  = 'http://localhost:3000/login'
     mail(to: user.username, subject: 'Sign Up Confirmation')
   end
+
+  def forgot_password_email(user)
+    @user = user
+    @url  = 'http://localhost:3000/reset/'+user.remember_token
+    mail(to: @user.email, subject: 'Reset your password')
+  end
+
 end
