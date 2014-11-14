@@ -16,6 +16,7 @@ Rails.application.routes.draw do
   get '/forgot' => 'access#forgot_password'
   post '/send_reset' => 'access#send_reset'
   get '/reset/:token' => 'access#reset_password'
+  post '/update_password' => 'access#update_password'
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

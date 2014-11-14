@@ -4,31 +4,38 @@ class AccessController < ApplicationController
 
   def reset_password
     @token = params[:token]
-    @user = User.find_by_remember_token @token
-    render :reset_password
+    @user = User.find_by :reset_token => @token
+    if @user.nil?
+      flash[:error] = "Invalid reset token"
+      render :login
+    else  
+      render :reset_password
+    end
   end
 
   #post '/send_reset' => 'user#reset_password'
   def send_reset
-    # email in param
-    email = params[:email]
-    user = User.find_by_email email
+    # username in param
+    username = params[:username]
+    user =  User.find_by username: username
     if user.nil?
-      flash[:error] = "No such email:" + email
+      flash[:error] = "No such user:" + username
     else
+      # create and save reset token on user
+      user.reset_token = (0...16).map { (65 + rand(26)).chr }.join
+      user.save
       UserMailer.forgot_password_email(user).deliver
       flash[:success] = "Please check your email for reset instructions ..."
     end
     render :forgot_password
   end
 
-
-  def update
-    user_params = params.require(:user).permit(:username, :password, :password_confirmation)
-    @user = User.find_by_email(user_params[:username])
-        binding.pry
+  def update_password
+    user_params = params.permit(:username, :password, :password_confirmation)
+    @user = User.find_by username: user_params[:username]
     @user.update_attributes(password: user_params[:password], password_confirmation: user_params[:password_confirmation])
-    render :home
+    flash[:success] = "Your password has changed, try it out ..."
+    render :login
   end
 
   def signup

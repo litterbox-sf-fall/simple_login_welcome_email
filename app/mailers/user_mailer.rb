@@ -14,8 +14,8 @@ class UserMailer < ActionMailer::Base
 
   def forgot_password_email(user)
     @user = user
-    @url  = 'http://localhost:3000/reset/'+user.remember_token
-    mail(to: @user.email, subject: 'Reset your password')
+    @url  = 'http://localhost:3000/reset/'+ user.reset_token
+    mail(to: @user.username, subject: 'Reset your password')
   end
 
 end
